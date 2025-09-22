@@ -25,6 +25,9 @@
         margin: 0;
         padding: 0;
       }
+      .inpMoBtn {
+        display: none;
+      }
     </style>
   </head>
   <body>
@@ -35,6 +38,8 @@
       <div class="row">
         <div class="col-md-6 offset-md-3 d-flex">
           <input type="text" value="" class="inp form-control me-2" placeholder="오늘의 할일을 입력하세요" />
+
+          <input type="hidden" class="numInp" value="" />
           <button class="btn btn-primary inpBtn" style="width: 100px">입력</button>
           <button class="btn btn-danger inpMoBtn" style="width: 100px">수정</button>
         </div>
@@ -114,7 +119,9 @@
       //dom
       const viewDataElem = document.querySelector('.viewList');
       const inpElem = document.querySelector('.inp'); // value
+      const inpNumElem = document.querySelector('.numInp');
       const btnElem = document.querySelector('.inpBtn'); // event
+      const btnMoElem = document.querySelector('.inpMoBtn'); // event
       const delAllElem = document.querySelector('.delAll');
 
       //create
@@ -129,10 +136,24 @@
         }
       });
 
+      //modify
+      btnMoElem.addEventListener('click', function () {
+        // alert('진짜수정!');
+
+        listView[inpNumElem.value].todo = inpElem.value;
+
+        //1 버튼 입력으로 변경
+        btnElem.style.display = 'block';
+        btnMoElem.style.display = 'none';
+        inpElem.value = '';
+        viewData();
+      });
+
       //function
       //read
       function viewData() {
         let viewData = '';
+        //i 0,1,2
         listView.forEach(function (item, i) {
           viewData += `
               <li class="d-flex justify-content-between py-3">
@@ -149,13 +170,13 @@
           // `;
           //           }
           if (item.done) {
-            viewData += `<i class="fa-solid fa-square-check" onclick="done(${i})"></i>`;
+            viewData += `<i class="fa-solid fa-square-check " onclick="done(${i})"></i>`;
           } else {
-            viewData += `<i class="fa-solid fa-square"  onclick="done(${i})"></i>`;
+            viewData += `<i class="fa-solid fa-square "  onclick="done(${i})"></i>`;
           }
 
           viewData += `
-                  <i class="fa-solid fa-pen"></i>
+                  <i class="fa-solid fa-pen" onclick="modi(${i},'${listView[i].todo}')"></i>
                   <i class="fa-solid fa-trash" onclick="del(${i})"></i>
                 </div>
               </li>
@@ -194,6 +215,22 @@
         listView = [];
         viewData();
       });
+
+      function modi(index, todo) {
+        // alert('수정' + todo);
+        inpElem.value = todo;
+        inpNumElem.value = index;
+        btnElem.style.display = 'none';
+        btnMoElem.style.display = 'block';
+      }
+
+      /*
+      개선방향
+      - done:true 이면 수정, 삭제금지
+      - done:true 이면 글자, 글자를 text-decoration:line-through
+      - done;false 원상복구
+      - 수정시 취소버튼 추가
+      */
     </script>
   </body>
 </html>
